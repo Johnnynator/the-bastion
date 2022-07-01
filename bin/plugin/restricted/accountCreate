@@ -122,7 +122,10 @@ if (!$pubKey && !$noKey) {
 
 if (!$noKey) {
     $fnret = OVH::Bastion::is_valid_public_key(pubKey => $pubKey, way => 'ingress');
-    $fnret or osh_exit $fnret;
+    if (!$fnret) {
+        osh_debug("The public key contents we got follows, surrounded by <>'s: <$pubKey>");
+        osh_exit $fnret;
+    }
 }
 
 #
