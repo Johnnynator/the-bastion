@@ -302,7 +302,7 @@ sub get_ssh_pub_key_info {
 
     my ($prefix, $typecode, $base64, $comment);
     if ($pubKey =~
-        m{^\s*((\S+)\s+)?(ssh-dss|ssh-rsa|ecdsa-sha\d+-nistp\d+|ssh-ed\d+)\s+([a-zA-Z0-9/=+]+)(\s+(.{1,128})?)?$}
+        m{^\s*((\S+)\s+)?(ssh-dss|ssh-rsa|ecdsa-sha\d+-nistp\d+|ssh-ed\d+|sk-ssh-ed\d+\@openssh\.com|sk-ecdsa-sha\d+-nistp\d+\@openssh\.com)\s+([a-zA-Z0-9/=+]+)(\s+(.{1,128})?)?$}
         && length($pubKey) <= 3000)
     {
         ($prefix, $typecode, $base64, $comment) = ($2, $3, $4, $6);
@@ -360,7 +360,7 @@ sub get_ssh_pub_key_info {
 256 SHA256:Yggd7VRRbbivxkdVwrdt0HpqKNylMK91nNIU+RxndTI john@doe (ED25519)
 =cut
 
-        if (defined $sshkeygen and $sshkeygen =~ /^(\d+)\s+(\S+)\s+(.+)\s+\(([A-Z0-9]+)\)$/) {
+        if (defined $sshkeygen and $sshkeygen =~ /^(\d+)\s+(\S+)\s+(.+)\s+\(([A-Z0-9-]+)\)$/) {
             my ($size, $fingerprint, $comment2, $family) = ($1, $2, $3, $4);
             $return{'size'}        = $size + 0;
             $return{'fingerprint'} = $fingerprint;
@@ -432,7 +432,7 @@ EOS
     elsif ($fnret->err eq 'KO_NOT_A_KEY') {
         $fnret->{'msg'} = <<'EOS';
 This doesn't look like an SSH public key, accepted formats are RSA (>= 2048 bits)
-and if supported by the OS, ECDSA and Ed25519.
+and if supported by the OS, ECDSA, Ed25519, ECDSA-SK and Ed25519-SK.
 EOS
     }
     elsif ($fnret->err eq 'KO_VULNERABLE_KEY') {
@@ -456,7 +456,7 @@ EOS
         $fnret->{'msg'} = "Unknown error (" . $fnret->msg . "), please report to your sysadmin.";
     }
     else {
-        if (not grep { $fnret->value->{'family'} eq $_ } qw{ RSA ECDSA ED25519 }) {
+        if (not grep { $fnret->value->{'family'} eq $_ } qw{ RSA ECDSA ECDSA-SK ED25519 ED25519-SK }) {
             $fnret->{'err'} = 'ERR_UNKNOWN_TYPE';
             $fnret->{'msg'} =
               "Unknown family type (" . $fnret->value->{'family'} . "), please report to your sysadmin.";

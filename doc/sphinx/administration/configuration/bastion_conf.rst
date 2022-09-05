@@ -214,7 +214,7 @@ allowedIngressSshAlgorithms
 
 :Type: ``array of strings (algorithm names)``
 
-:Default: ``[ "rsa", "ecdsa", "ed25519" ]``
+:Default: ``[ "rsa", "ecdsa", "ecdsa-sk", "ed25519", "ed25519-sk" ]``
 
 The algorithms authorized for ingress ssh public keys added to this bastion. Possible values: ``dsa``, ``rsa``, ``ecdsa``, ``ed25519``, note that some of those might not be supported by your current version of ``OpenSSH``: unsupported algorithms are automatically omitted at runtime.
 
